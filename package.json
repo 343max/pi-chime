@@ -1,0 +1,10 @@
+{
+  "name": "pi-chime",
+  "version": "1.0.0",
+  "description": "Play a chime sound when pi is waiting for input",
+  "keywords": ["pi-package"],
+  "license": "MIT",
+  "peerDependencies": {
+    "@earendil-works/pi-coding-agent": "*"
+  }
+}
