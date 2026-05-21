@@ -20,7 +20,10 @@ Or add to your project settings (`.pi/settings.json`):
 
 ## Usage
 
-Just use pi normally. When the agent finishes, you'll hear the chime.
+Just use pi normally. When the agent finishes, you'll hear the chime and
+a 🔵 indicator appears in the terminal tab title. The dot disappears
+automatically when you switch back to the pi tab (via terminal focus
+reporting), or when you start your next prompt.
 
 ### Toggle
 
@@ -34,6 +37,8 @@ Just use pi normally. When the agent finishes, you'll hear the chime.
 
 - macOS (uses `afplay`)
 - The chime is non-blocking and fails silently if audio is unavailable
+- 🔵 tab indicator uses xterm focus reporting (`CSI ? 1004 h`); supported
+  by Kitty, iTerm2, WezTerm, Ghostty, and Windows Terminal
 
 ## License
 
