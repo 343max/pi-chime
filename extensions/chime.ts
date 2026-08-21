@@ -46,6 +46,8 @@ function clearDot(ctx: ExtensionContext): void {
 
 export default function (pi: ExtensionAPI) {
 	let focusCleanup: (() => void) | null = null;
+	// Latest session context, tracked for event-bus handlers (which receive no ctx).
+	let latestCtx: ExtensionContext | null = null;
 
 	function stopFocusDetection(): void {
 		if (focusCleanup) {
@@ -94,10 +96,27 @@ export default function (pi: ExtensionAPI) {
 		};
 	}
 
-	pi.on("agent_end", async (event, ctx) => {
+	// Play the chime and mark the tab as "waiting for input".
+	function onWaitingForInput(ctx: ExtensionContext): void {
 		playChime();
 		setDot(ctx);
 		startFocusDetection(ctx);
+	}
+
+	pi.on("session_start", (_event, ctx) => {
+		latestCtx = ctx;
+	});
+
+	pi.on("agent_end", async (_event, ctx) => {
+		onWaitingForInput(ctx);
+	});
+
+	// Also chime when the agent pauses to ask a question via ask_user_question
+	// (@juicesharp/rpiv-ask-user-question). It emits "rpiv:ask-user:prompt" on
+	// the shared event bus when it shows a questionnaire and waits for input —
+	// the same "waiting for input" state that agent_end signals.
+	pi.events.on("rpiv:ask-user:prompt", () => {
+		if (latestCtx) onWaitingForInput(latestCtx);
 	});
 
 	pi.on("agent_start", async (event, ctx) => {
